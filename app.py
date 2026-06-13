@@ -16,7 +16,8 @@ app = Flask(__name__)
 # Fix S1: Use environment variable for secret key instead of hardcoded value
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(24).hex())
 
-UPLOAD_FOLDER = '.tmp'
+# Use /tmp on Vercel serverless environment, otherwise local .tmp
+UPLOAD_FOLDER = '/tmp' if os.environ.get('VERCEL') == '1' else '.tmp'
 ALLOWED_EXTENSIONS = {'csv'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024
