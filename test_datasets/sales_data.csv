@@ -1,0 +1,9 @@
+Order_ID,Product,Quantity,Unit_Price,Revenue,Order_Date,Region
+101,Laptop,1,1200,1200,2023-01-15,North
+102,Mouse,5,25,125,02/10/2023,East
+103,Keyboard,,45,90,2023/12/30,West
+104,Monitor,1,300,300,15-06-2023,South
+105,Laptop,1,1200,1000000,2023-07-20,North
+101,Laptop,1,1200,1200,2023-01-15,North
+106,Mouse,2,25,50,not-a-date,East
+107,Headphones,1,80,,2023-09-12,West

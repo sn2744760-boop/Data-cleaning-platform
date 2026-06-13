@@ -1,0 +1,8 @@
+Lead_ID,Name,Email,Status,Source,Phone
+L001,  John Doe,john.doe@gmail.com,New,Web,555-0101
+L002,jane smith ,JANE.SMITH@PROVIDER.COM,INTERESTED,Referral,
+L001,  John Doe,john.doe@gmail.com,New,Web,555-0101
+L003,Bob Wilson,bob@wilson,Closed,Social,1234567890
+L004,,alice@test.com,New,,999-888-7777
+L004,,alice@test.com,New,,999-888-7777
+L005,charlie davis,charlie@davis.io,NEW,Ads,

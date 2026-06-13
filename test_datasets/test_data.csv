@@ -1,0 +1,11 @@
+name,age,email,join_date,score
+John Doe,28,john@example.com,2023-01-15,85.5
+Jane Smith,,jane@test.com,02/10/2022,92.0
+Bob Wilson,45,bob@wilson.org,2021-12-30,
+Alice Brown,32,,2023/05/20,78.5
+Charlie Davis,29,charlie@davis.com,2022-09-12,88.0
+John Doe,28,john@example.com,2023-01-15,85.5
+Eve Miller,150,eve@miller.co,2020-01-01,95.0
+Frank Wright,34,frank@office.com,2023-06-15,10.0
+  Grace Hopper ,85,grace@navy.mil,01-01-1950,100.0
+Testing User,,,not-a-date,NaN

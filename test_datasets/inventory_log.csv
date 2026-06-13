@@ -1,0 +1,9 @@
+SKU,Warehouse,Bin_Location,Current_Stock,Audit_Date,Notes
+S-001,Primary,A-12,500,2023-10-01,In stock
+S-002,Secondary,,250,2023-10-05,
+S-003,Primary,,,2023-10-10,
+S-004,Secondary,,,2023-10-12,
+S-005,Primary,,,2023-10-15,
+S-006,Secondary,,,2023-10-20,
+S-007,Overflow,,,2023-10-25,
+S-008,Primary,B-04,120,2023-10-30,Low stock

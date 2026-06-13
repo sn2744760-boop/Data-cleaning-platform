@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered autonomous data cleaning and optimization platform with Human-in-the-Loop orchestration.">
+    <title>AI Data Optimizer | 10.0 Intelligence Tier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <style>
+        .health-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-raised);
+            color: var(--accent-primary);
+            background: var(--panel-bg);
+            border: 4px solid var(--panel-bg);
+        }
+
+        .issue-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: var(--panel-bg);
+            box-shadow: var(--shadow-inset-small);
+            margin: 4px;
+            color: var(--text-secondary);
+        }
+
+        .issue-tag.bad {
+            color: var(--danger);
+        }
+
+        .issue-tag.good {
+            color: var(--success);
+        }
+
+        .issue-tag.warning {
+            color: #f59e0b;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-clean {
+            color: var(--success);
+        }
+
+        .status-warning {
+            color: #f59e0b;
+        }
+
+        .status-critical {
+            color: var(--danger);
+        }
+
+        .strategy-select {
+            background: var(--panel-bg);
+            border: none;
+            box-shadow: var(--shadow-inset-small);
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader" class="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: var(--accent-primary); font-weight: 600;">Applying Prescriptive
+            Optimization...</p>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>AI Data Optimizer <small
+                    style="font-size: 0.8rem; vertical-align: middle; background: var(--accent-primary); color: white; padding: 2px 8px; border-radius: 10px;">TIER
+                    10</small></h1>
+            <p class="subtitle">Autonomous Intelligence with Human-in-the-Loop Orchestration</p>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Upload -->
+        <section class="glass-panel">
+            <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data"
+                onsubmit="showLoader()">
+                <div class="upload-zone">
+                    <p id="fileNameDisplay">Upload dataset for 10.0 level deep autonomous audit</p>
+                    <input type="file" name="file" id="fileInput" accept=".csv" style="display: none;">
+                    <button type="button" class="btn-primary"
+                        onclick="document.getElementById('fileInput').click()">Browse Dataset</button>
+                    <button type="submit" class="btn-primary"
+                        style="background: var(--success); margin-left: 10px;">Initialize Intelligence</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Interactive Diagnostic Audit -->
+        {% if diagnostic %}
+        <section class="glass-panel">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-family: 'Outfit'; margin-bottom: 0.5rem;">Intelligence Diagnostic Audit</h2>
+                <div class="health-circle">{{ diagnostic.health_score }}%</div>
+                <p class="subtitle">Review AI Prescriptions for <strong>{{ diagnostic.filename }}</strong></p>
+            </div>
+
+            <form action="{{ url_for('optimize_file', filename=filename) }}" method="post" onsubmit="showLoader()">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Column</th>
+                                <th>Type</th>
+                                <th>Diagnostics</th>
+                                <th>AI Recommendation</th>
+                                <th>Action Strategy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for col, diag in diagnostic.column_diagnostics.items() %}
+                            <tr>
+                                <td><strong>{{ col }}</strong></td>
+                                <td><span class="issue-tag">{{ diag.type }}</span></td>
+                                <td>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Nulls: {{
+                                        diag.null_count }} ({{ diag.sparsity }}%)</span><br>
+                                    {% if diag.skewness is defined %}
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Skew: {{
+                                        diag.skewness }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span
+                                        class="status-badge {% if 'Clean' in diag.status %}status-clean{% elif 'Warning' in diag.status %}status-warning{% else %}status-critical{% endif %}">
+                                        {{ diag.recommended }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <select name="strategy_{{ col }}" class="strategy-select">
+                                        <option value="Auto" {% if diag.recommended=='Auto' %}selected{% endif %}>Auto
+                                            (Recommended)</option>
+                                        {% if 'float' in diag.type or 'int' in diag.type %}
+                                        <option value="Median" {% if diag.recommended=='Median' %}selected{% endif %}>
+                                            Median Impute</option>
+                                        <option value="Mean" {% if diag.recommended=='Mean' %}selected{% endif %}>Mean
+                                            Impute</option>
+                                        {% else %}
+                                        <option value="Mode" {% if diag.recommended=='Mode' %}selected{% endif %}>Mode
+                                            Aggregation</option>
+                                        {% endif %}
+                                        <option value="Drop">Drop Column</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 3rem; text-align: center;">
+                    <button type="submit" class="btn-primary"
+                        style="background: var(--success); font-size: 1.2rem; padding: 1.5rem 4rem;">
+                        Execute 10.0 Optimization
+                    </button>
+                    <p style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">The AI will
+                        perfectly balance your overrides with its base stabilization model.</p>
+                </div>
+            </form>
+        </section>
+        {% endif %}
+
+        <!-- Optimized Visualization -->
+        {% if optimized_results %}
+        <section class="glass-panel" id="optimizationResults" data-health-before="{{ optimized_results.health_before }}"
+            data-health-after="{{ optimized_results.health_after }}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h2 style="font-family: 'Outfit';">Standardization Report</h2>
+                    <p class="subtitle">Advanced Health Metric Optimization</p>
+                </div>
+                <a href="/download/{{ optimized_results.output_file }}" class="btn-primary"
+                    style="background: var(--success); text-decoration: none;">Export Final Dataset</a>
+            </div>
+
+            <div class="chart-container" style="height: 250px;">
+                <canvas id="improvementChart"></canvas>
+            </div>
+
+            <div style="margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem;">
+                <h4 style="color: var(--accent-primary);">Optimization Audit Log:</h4>
+                <ul style="margin-top: 1.5rem; color: var(--text-secondary); list-style: none;">
+                    {% for step in optimized_results.report.steps_applied %}
+                    <li style="margin-bottom: 0.8rem; display: flex; align-items: center;">
+                        <span style="color: var(--success); font-weight: 800; margin-right: 12px;">✓</span> {{ step }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Data Insight -->
+        {% if preview %}
+        <section class="glass-panel">
+            <h3 style="margin-bottom: 1.5rem;">Standardized Data Insight (Top 10)</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>{% for col in columns %}<th>{{ col }}</th>{% endfor %}</tr>
+                    </thead>
+                    <tbody>
+                        {% for row in preview %}
+                        <tr>{% for col in columns %}<td>{{ row[col] }}</td>{% endfor %}</tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+    <script>
+        function showLoader() { document.getElementById('loader').style.display = 'flex'; }
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files.length > 0) document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+        });
+
+        const optResults = document.getElementById('optimizationResults');
+        if (optResults) {
+            const hB = parseInt(optResults.dataset.healthBefore);
+            const hA = parseInt(optResults.dataset.healthAfter);
+            new Chart(document.getElementById('improvementChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Initial Diagnostic Health', 'Final Standardized Health'],
+                    datasets: [{
+                        data: [hB, hA],
+                        backgroundColor: ['rgba(239, 68, 68, 0.4)', 'rgba(16, 185, 129, 0.4)'],
+                        borderColor: ['#ef4444', '#10b981'],
+                        borderWidth: 2, borderRadius: 15
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { color: '#7e8299' } },
+                        x: { grid: { display: false }, ticks: { color: '#7e8299' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
