@@ -1,0 +1,8 @@
+name,email,phone,city,age,dob
+Alice,alice@example.com,+1-800-555-0100,New York,30,2025-01-15
+Bob,bob@,123,Mumbai,25,Jan 1 2025
+Charlie,@gmail.com,9876543210,London,-5,2025/13/01
+Dave,dave@domain.com,000000000,mumbai,130,not_a_date
+Eve,valid@test.org,+91-9999999999,delhi,45,2025-06-01
+Frank,frank@frank.com,5551234567,NYC,22,15/06/2025
+Grace,grace@example.com,+447911123456,Berlin,28,2025-00-01

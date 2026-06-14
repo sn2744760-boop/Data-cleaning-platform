@@ -4,103 +4,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI-powered autonomous data cleaning and optimization platform with Human-in-the-Loop orchestration.">
-    <title>AI Data Optimizer | 10.0 Intelligence Tier</title>
+    <meta name="description" content="AI-powered autonomous data cleaning and optimization platform — supports CSV & XLSX with email validation, date standardization, type conversion and more.">
+    <title>AI Data Optimizer | Tier 10 Intelligence</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
     <style>
-        .health-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 0 auto 1.5rem;
-            box-shadow: var(--shadow-raised);
-            color: var(--accent-primary);
-            background: var(--panel-bg);
-            border: 4px solid var(--panel-bg);
-        }
-
-        .issue-tag {
+        /* ═══ Semantic Type Badges (dark neon) ═══ */
+        .sem-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 11px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            background: var(--panel-bg);
-            box-shadow: var(--shadow-inset-small);
-            margin: 4px;
-            color: var(--text-secondary);
-        }
-
-        .issue-tag.bad {
-            color: var(--danger);
-        }
-
-        .issue-tag.good {
-            color: var(--success);
-        }
-
-        .issue-tag.warning {
-            color: #f59e0b;
-        }
-
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            font-size: 0.69rem;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .sem-email  { background: rgba(59,130,246,0.13); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+        .sem-phone  { background: rgba(34,211,238,0.13);  color: #22d3ee; border: 1px solid rgba(34,211,238,0.25); }
+        .sem-date   { background: rgba(20,184,166,0.13);  color: #2dd4bf; border: 1px solid rgba(20,184,166,0.25); }
+        .sem-bool   { background: rgba(249,115,22,0.13);  color: #fb923c; border: 1px solid rgba(249,115,22,0.25); }
+        .sem-numstr { background: rgba(251,191,36,0.13);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+        .sem-num    { background: rgba(16,217,160,0.13);  color: #10d9a0; border: 1px solid rgba(16,217,160,0.25); }
+        .sem-text   { background: rgba(148,163,184,0.08); color: #94a3b8; border: 1px solid rgba(148,163,184,0.15); }
+
+        /* ═══ Health Circle ═══ */
+        .health-circle {
+            width: 134px; height: 134px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.3rem; font-weight: 900;
+            margin: 0 auto 1.2rem;
+            background: #0c1124;
+            border: 3px solid rgba(79,140,255,0.4);
+            box-shadow: 0 0 50px rgba(79,140,255,0.25), 0 0 0 6px rgba(79,140,255,0.06);
+            color: #4f8cff;
         }
 
-        .status-clean {
-            color: var(--success);
+        /* ═══ Issue Tags ═══ */
+        .issue-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.77rem; font-weight: 600;
+            background: #10162d;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin: 3px;
+            color: #7a8baf;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .issue-tag:hover { transform: scale(1.04); }
+        .issue-tag.bad     { color: #f43f5e; border-color: rgba(244,63,94,0.3);  background: rgba(244,63,94,0.08); }
+        .issue-tag.good    { color: #10d9a0; border-color: rgba(16,217,160,0.3); background: rgba(16,217,160,0.08); }
+        .issue-tag.warning { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
 
-        .status-warning {
-            color: #f59e0b;
+        /* ═══ Status Badge ═══ */
+        .status-badge {
+            padding: 4px 10px; border-radius: 8px;
+            font-size: 0.71rem; font-weight: 700;
+            text-transform: uppercase;
         }
+        .status-clean    { color: #10d9a0; }
+        .status-warning  { color: #fbbf24; }
+        .status-critical { color: #f43f5e; }
 
-        .status-critical {
-            color: var(--danger);
-        }
-
+        /* ═══ Strategy Selects ═══ */
         .strategy-select {
-            background: var(--panel-bg);
-            border: none;
-            box-shadow: var(--shadow-inset-small);
-            padding: 8px 12px;
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
+            background: #151d38;
+            border: 1px solid rgba(255,255,255,0.07);
+            padding: 7px 10px; border-radius: 10px;
+            color: #d8e2f8; font-weight: 500;
+            font-size: 0.82rem; outline: none; cursor: pointer;
+            width: 100%; transition: border-color 0.2s;
+            -webkit-appearance: none;
+        }
+        .strategy-select:hover,
+        .strategy-select:focus { border-color: #4f8cff; }
+        .custom-fill-input {
+            margin-top: 6px;
+            background: #151d38;
+            border: 1px solid rgba(255,255,255,0.07);
+            padding: 7px 10px; border-radius: 10px;
+            color: #d8e2f8; font-weight: 500;
+            font-size: 0.82rem; outline: none; width: 100%;
+            display: none; transition: border-color 0.2s;
+        }
+        .custom-fill-input:focus { border-color: #4f8cff; }
+        .custom-fill-input::placeholder { color: #374060; }
+
+        /* ═══ Metrics Grid ═══ */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .metric-card {
+            background: #10162d;
+            border-radius: 16px;
+            padding: 1.3rem 1rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 2px solid #4f8cff;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative; overflow: hidden;
+        }
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 36px;
+            background: linear-gradient(180deg, rgba(79,140,255,0.06), transparent);
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+        }
+        .metric-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.85rem; font-weight: 800;
+            color: #4f8cff;
+            display: block; margin-bottom: 0.3rem;
+        }
+        .metric-val.danger  { color: #f43f5e; }
+        .metric-val.success { color: #10d9a0; }
+        .metric-val.warning { color: #fbbf24; }
+        .metric-label {
+            font-size: 0.67rem; font-weight: 700;
+            color: #7a8baf;
+            text-transform: uppercase; letter-spacing: 1.2px; line-height: 1.4;
+        }
+
+        /* ═══ Numeric Range Display ═══ */
+        .num-range {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.68rem; color: #374060;
+            margin-top: 4px;
+        }
+        .email-issues-list {
+            font-size: 0.68rem; color: #f43f5e;
+            margin-top: 4px; font-style: italic;
+        }
+
+        /* ═══ Audit Tags ═══ */
+        .audit-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; margin: 1.2rem 0;
+        }
+
+        /* ═══ Verification Panel ═══ */
+        .verify-panel {
+            background: #0c1124;
+            border-radius: 18px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-top: 2rem;
+        }
+        .verify-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.9rem;
+        }
+        .verify-row:last-child { border-bottom: none; }
+        .verify-icon { font-size: 1.1rem; margin-right: 0.7rem; }
+        .verify-label { color: #7a8baf; flex: 1; }
+        .verify-val {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; font-size: 1.05rem;
+        }
+        .verify-pass { color: #10d9a0; }
+        .verify-warn { color: #fbbf24; }
+        .export-status-badge {
+            display: inline-block;
+            padding: 8px 24px; border-radius: 30px;
+            font-weight: 800; font-size: 0.88rem;
+            letter-spacing: 0.05em; margin-top: 1.2rem;
+        }
+        .export-pass { background: rgba(16,217,160,0.1); color: #10d9a0; border: 1px solid rgba(16,217,160,0.28); }
+        .export-warn { background: rgba(251,191,36,0.1);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.28); }
+
+        /* ═══ Quality Score ═══ */
+        .quality-section { margin-top: 2rem; }
+        .quality-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1rem;
+        }
+        .quality-score-block {
+            display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;
+        }
+        .qs-circle {
+            width: 90px; height: 90px; border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            background: #0c1124;
+        }
+        .qs-circle-before {
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 24px rgba(251,191,36,0.2);
+        }
+        .qs-circle-after {
+            border: 2px solid #10d9a0;
+            box-shadow: 0 0 24px rgba(16,217,160,0.2);
+        }
+        .qs-num { font-size: 1.5rem; font-weight: 800; }
+        .qs-lbl {
+            font-size: 0.62rem; font-weight: 700;
+            text-transform: uppercase; color: #7a8baf;
+            letter-spacing: 0.08em;
+        }
+        .qs-improvement {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: #10d9a0;
+            background: rgba(16,217,160,0.1);
+            padding: 6px 18px; border-radius: 20px;
+            border: 1px solid rgba(16,217,160,0.25);
         }
     </style>
 </head>
 
 <body>
+    <!-- Loading Overlay -->
     <div id="loader" class="loading-overlay">
         <div class="spinner"></div>
-        <p style="margin-top: 1rem; color: var(--accent-primary); font-weight: 600;">Applying Prescriptive
-            Optimization...</p>
+        <p style="margin-top: 1.4rem; color: #4f8cff; font-weight: 600; letter-spacing: 0.04em; font-size: 0.95rem;">
+            Applying Intelligence Pipeline…</p>
+        <p style="margin-top: 0.5rem; color: #374060; font-size: 0.8rem;">Please wait — this may take a moment</p>
     </div>
 
     <div class="container">
         <header>
-            <h1>AI Data Optimizer <small
-                    style="font-size: 0.8rem; vertical-align: middle; background: var(--accent-primary); color: white; padding: 2px 8px; border-radius: 10px;">TIER
-                    10</small></h1>
-            <p class="subtitle">Autonomous Intelligence with Human-in-the-Loop Orchestration</p>
+            <h1>AI Data Optimizer
+                <small style="font-size: 0.58rem; vertical-align: middle;
+                    background: linear-gradient(135deg, #4f8cff, #22d3ee);
+                    color: white; -webkit-text-fill-color: white;
+                    padding: 4px 11px; border-radius: 12px;
+                    font-weight: 800; letter-spacing: 0.12em;
+                    box-shadow: 0 4px 14px rgba(79,140,255,0.45);
+                    position: relative; top: -2px;">TIER 10</small>
+            </h1>
+            <p class="subtitle" style="margin-top: 0.4rem;">Autonomous Intelligence &nbsp;·&nbsp; CSV &amp; XLSX &nbsp;·&nbsp; Human-in-the-Loop Orchestration</p>
         </header>
 
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
@@ -109,31 +258,87 @@
         {% endif %}
         {% endwith %}
 
-        <!-- Upload -->
+        <!-- ── Upload Panel ──────────────────────────────────────────── -->
         <section class="glass-panel">
-            <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data"
-                onsubmit="showLoader()">
+            <form action="{{ url_for('upload_file') }}" method="post"
+                enctype="multipart/form-data" onsubmit="showLoader()">
                 <div class="upload-zone">
-                    <p id="fileNameDisplay">Upload dataset for 10.0 level deep autonomous audit</p>
-                    <input type="file" name="file" id="fileInput" accept=".csv" style="display: none;">
+                    <div style="margin-bottom: 1rem; font-size: 2.2rem;">📂</div>
+                    <p id="fileNameDisplay" style="margin-bottom: 0.6rem; font-weight: 600; color: #d8e2f8; font-size: 1rem;">
+                        Upload a dataset for deep autonomous audit
+                    </p>
+                    <p style="font-size: 0.82rem; color: #7a8baf; margin-bottom: 2rem;">
+                        Accepts <strong style="color: #4f8cff;">.csv</strong> and <strong style="color: #4f8cff;">.xlsx / .xls</strong>
+                    </p>
+                    <input type="file" name="file" id="fileInput"
+                        accept=".csv,.xlsx,.xls" style="display:none;">
                     <button type="button" class="btn-primary"
-                        onclick="document.getElementById('fileInput').click()">Browse Dataset</button>
+                        style="background: rgba(79,140,255,0.12); border: 1px solid rgba(79,140,255,0.3); box-shadow: none; color: #4f8cff; -webkit-text-fill-color: #4f8cff;"
+                        onclick="document.getElementById('fileInput').click()">
+                        Browse Dataset
+                    </button>
                     <button type="submit" class="btn-primary"
-                        style="background: var(--success); margin-left: 10px;">Initialize Intelligence</button>
+                        style="background: linear-gradient(135deg, #10d9a0, #22d3ee); margin-left: 12px; color: #031c13; -webkit-text-fill-color: #031c13; box-shadow: 0 4px 20px rgba(16,217,160,0.35);">
+                        Initialize Intelligence
+                    </button>
                 </div>
             </form>
         </section>
 
-        <!-- Interactive Diagnostic Audit -->
+        <!-- ── Diagnostic Audit ─────────────────────────────────────── -->
         {% if diagnostic %}
         <section class="glass-panel">
-            <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-family: 'Outfit'; margin-bottom: 0.5rem;">Intelligence Diagnostic Audit</h2>
-                <div class="health-circle">{{ diagnostic.health_score }}%</div>
-                <p class="subtitle">Review AI Prescriptions for <strong>{{ diagnostic.filename }}</strong></p>
+            <div style="text-align:center; margin-bottom:2.5rem;">
+                <h2 style="font-family:'Outfit'; margin-bottom:0.5rem;">
+                    Intelligence Diagnostic Audit
+                </h2>
+                <div style="position:relative; display:inline-block; margin-bottom:1.5rem;">
+                    <div class="health-circle" style="margin-bottom:0.3rem;">{{ diagnostic.health_score }}%</div>
+                    <button type="button" onclick="openScoreModal()" style="background:none; border:none; color:var(--accent-primary); font-weight:700; cursor:pointer; font-size:0.88rem; outline:none; display:inline-flex; align-items:center; gap:4px; margin:0 auto;">
+                        ⓘ Score Details
+                    </button>
+                </div>
+                <p class="subtitle">
+                    Reviewing <strong>{{ diagnostic.filename }}</strong> —
+                    {{ diagnostic.raw_stats.rows }} rows · {{ diagnostic.raw_stats.cols }} columns
+                </p>
+
+                <!-- Audit Summary Tags -->
+                <div class="audit-tags">
+                    <span class="issue-tag {{ 'bad' if diagnostic.audit.null_count > 0 else 'good' }}">
+                        {{ diagnostic.audit.null_count }} Missing Values
+                    </span>
+                    <span class="issue-tag {{ 'bad' if diagnostic.audit.duplicate_count > 0 else 'good' }}">
+                        {{ diagnostic.audit.duplicate_count }} Duplicates
+                    </span>
+                    <span class="issue-tag {{ 'bad' if diagnostic.audit.fuzzy_duplicate_count > 0 else 'good' }}">
+                        {{ diagnostic.audit.fuzzy_duplicate_count }} Fuzzy Duplicates
+                    </span>
+                    <span class="issue-tag {{ 'warning' if diagnostic.audit.outlier_count > 0 else 'good' }}">
+                        {{ diagnostic.audit.outlier_count }} Outliers
+                    </span>
+                    {% if diagnostic.audit.email_cols %}
+                    <span class="issue-tag {{ 'bad' if diagnostic.audit.total_email_issues > 0 else 'good' }}">
+                        {{ diagnostic.audit.total_email_issues }} Invalid Emails
+                    </span>
+                    {% endif %}
+                    {% if diagnostic.audit.date_cols %}
+                    <span class="issue-tag warning">
+                        {{ diagnostic.audit.date_cols | length }} Date Column(s) Detected
+                    </span>
+                    {% endif %}
+                    {% if diagnostic.audit.numeric_str_cols %}
+                    <span class="issue-tag warning">
+                        {{ diagnostic.audit.numeric_str_cols | length }} Currency/Numeric String(s)
+                    </span>
+                    {% endif %}
+                </div>
             </div>
 
-            <form action="{{ url_for('optimize_file', filename=filename) }}" method="post" onsubmit="showLoader()">
+            <form id="optimizeForm"
+                action="{{ url_for('optimize_file', filename=filename) }}"
+                method="post" onsubmit="prepareCustomValues(); showLoader();">
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -148,37 +353,132 @@
                         <tbody>
                             {% for col, diag in diagnostic.column_diagnostics.items() %}
                             <tr>
+                                <!-- Column Name -->
                                 <td><strong>{{ col }}</strong></td>
-                                <td><span class="issue-tag">{{ diag.type }}</span></td>
+
+                                <!-- Type (raw dtype + semantic badge) -->
                                 <td>
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Nulls: {{
-                                        diag.null_count }} ({{ diag.sparsity }}%)</span><br>
-                                    {% if diag.skewness is defined %}
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Skew: {{
-                                        diag.skewness }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span
-                                        class="status-badge {% if 'Clean' in diag.status %}status-clean{% elif 'Warning' in diag.status %}status-warning{% else %}status-critical{% endif %}">
-                                        {{ diag.recommended }}
+                                    <span class="sem-badge {{ diag.sem_class }}">
+                                        {{ diag.sem_label }}
+                                    </span><br>
+                                    <span style="font-size:0.7rem; color:var(--text-secondary);">
+                                        {{ diag.type }}
                                     </span>
                                 </td>
+
+                                <!-- Diagnostics -->
                                 <td>
-                                    <select name="strategy_{{ col }}" class="strategy-select">
-                                        <option value="Auto" {% if diag.recommended=='Auto' %}selected{% endif %}>Auto
-                                            (Recommended)</option>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">
+                                        Nulls: {{ diag.null_count }} ({{ diag.sparsity }}%)
+                                    </span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">
+                                        Unique: {{ diag.unique_count }}
+                                    </span>
+
+                                    {% if diag.skewness is defined %}
+                                    <br><span style="font-size:0.78rem; color:var(--text-secondary);">
+                                        Skew: {{ diag.skewness }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if diag.min is defined and diag.max is defined %}
+                                    <div class="num-range">
+                                        Min: {{ diag.min }} &nbsp;|&nbsp; Max: {{ diag.max }}
+                                        &nbsp;|&nbsp; σ: {{ diag.std }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if diag.email_issues is defined and diag.email_issues > 0 %}
+                                    <div class="email-issues-list">
+                                        ⚠ {{ diag.email_issues }} invalid email(s)<br>
+                                        {% for ex in diag.invalid_email_examples %}
+                                        · {{ ex }}<br>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </td>
+
+                                <!-- AI Recommendation -->
+                                <td>
+                                    <span class="status-badge
+                                        {% if 'Clean' in diag.status %}status-clean
+                                        {% elif 'Warning' in diag.status %}status-warning
+                                        {% else %}status-critical{% endif %}">
+                                        {{ diag.recommended }}
+                                    </span>
+                                    <br>
+                                    <span style="font-size:0.7rem; color:var(--text-secondary);">
+                                        {{ diag.status }}
+                                    </span>
+                                </td>
+
+                                <!-- Action Strategy -->
+                                <td style="min-width:160px;">
+                                    <select name="strategy_{{ col }}"
+                                        id="sel_{{ col }}"
+                                        class="strategy-select"
+                                        onchange="toggleCustom('{{ col }}', this.value)">
+
+                                        <option value="Auto"
+                                            {% if diag.recommended == 'Auto' %}selected{% endif %}>
+                                            Auto (Recommended)
+                                        </option>
+
                                         {% if 'float' in diag.type or 'int' in diag.type %}
-                                        <option value="Median" {% if diag.recommended=='Median' %}selected{% endif %}>
-                                            Median Impute</option>
-                                        <option value="Mean" {% if diag.recommended=='Mean' %}selected{% endif %}>Mean
-                                            Impute</option>
+                                        <option value="Median"
+                                            {% if diag.recommended == 'Median' %}selected{% endif %}>
+                                            Median Impute
+                                        </option>
+                                        <option value="Mean"
+                                            {% if diag.recommended == 'Mean' %}selected{% endif %}>
+                                            Mean Impute
+                                        </option>
                                         {% else %}
-                                        <option value="Mode" {% if diag.recommended=='Mode' %}selected{% endif %}>Mode
-                                            Aggregation</option>
+                                        <option value="Mode"
+                                            {% if diag.recommended == 'Mode' %}selected{% endif %}>
+                                            Mode Aggregation
+                                        </option>
                                         {% endif %}
+
+                                        <option value="Custom">Custom Value…</option>
+                                        <option value="Skip">Skip (Leave Nulls)</option>
                                         <option value="Drop">Drop Column</option>
                                     </select>
+
+                                    <!-- Custom value text input (hidden until selected) -->
+                                    <input type="text"
+                                        id="custom_{{ col }}"
+                                        class="custom-fill-input"
+                                        placeholder="Enter fill value…">
+
+                                    {% if diag.semantic == 'email' %}
+                                    <div style="margin-top: 8px;">
+                                        <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:3px;">Email Cleaning:</span>
+                                        <select name="email_mode_{{ col }}" class="strategy-select">
+                                            <option value="flag" selected>Flag Only (Keep Rows)</option>
+                                            <option value="nullify">Replace with Null</option>
+                                            <option value="remove">Remove Rows</option>
+                                        </select>
+                                    </div>
+                                    {% elif diag.semantic == 'date' %}
+                                    <div style="margin-top: 8px;">
+                                        <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:3px;">Date Cleaning:</span>
+                                        <select name="date_mode_{{ col }}" class="strategy-select">
+                                            <option value="nullify" selected>Standardize & Nullify</option>
+                                            <option value="standardize">Standardize & Flag</option>
+                                            <option value="keep">Keep Original</option>
+                                        </select>
+                                    </div>
+                                    {% elif diag.semantic in ('integer', 'float') %}
+                                    <div style="margin-top: 8px;">
+                                        <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:3px;">Outliers:</span>
+                                        <select name="outlier_{{ col }}" class="strategy-select">
+                                            <option value="clip" selected>Clip (IQR)</option>
+                                            <option value="median_replace">Replace with Median</option>
+                                            <option value="remove_row">Remove Rows</option>
+                                        </select>
+                                    </div>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -188,50 +488,249 @@
 
                 <div style="margin-top: 3rem; text-align: center;">
                     <button type="submit" class="btn-primary"
-                        style="background: var(--success); font-size: 1.2rem; padding: 1.5rem 4rem;">
-                        Execute 10.0 Optimization
+                        style="background: linear-gradient(135deg, #10d9a0 0%, #22d3ee 100%); font-size: 1.05rem; padding: 1.1rem 3.5rem; color: #031c13; -webkit-text-fill-color: #031c13; box-shadow: 0 6px 28px rgba(16,217,160,0.4); letter-spacing: 0.08em;">
+                        ⚡ Execute v10 Optimization
                     </button>
-                    <p style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">The AI will
-                        perfectly balance your overrides with its base stabilization model.</p>
+                    <p style="margin-top: 1.2rem; color: #374060; font-size: 0.8rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.7;">
+                        <span style="color: #7a8baf; font-weight: 600;">10-step pipeline:</span>&nbsp;
+                        type conversion → deduplication → date standardization →
+                        email &amp; phone validation → city normalization → null healing →
+                        text standardization → outlier management → verification audit
+                    </p>
                 </div>
             </form>
         </section>
         {% endif %}
 
-        <!-- Optimized Visualization -->
+        <!-- ── Optimization Results ──────────────────────────────────── -->
         {% if optimized_results %}
-        <section class="glass-panel" id="optimizationResults" data-health-before="{{ optimized_results.health_before }}"
+        <section class="glass-panel" id="optimizationResults"
+            data-health-before="{{ optimized_results.health_before }}"
             data-health-after="{{ optimized_results.health_after }}">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <h2 style="font-family: 'Outfit';">Standardization Report</h2>
-                    <p class="subtitle">Advanced Health Metric Optimization</p>
+                    <h2 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 0.3rem;">
+                        Standardization Report
+                        <small style="font-size: 0.6rem; background: linear-gradient(135deg,#4f8cff,#22d3ee); color: #fff; -webkit-text-fill-color: #fff; padding: 3px 9px; border-radius: 8px; vertical-align: middle; font-weight: 800; letter-spacing: 0.1em;">v10</small>
+                    </h2>
+                    <p class="subtitle">Full 10-step intelligence pipeline applied</p>
                 </div>
-                <a href="/download/{{ optimized_results.output_file }}" class="btn-primary"
-                    style="background: var(--success); text-decoration: none;">Export Final Dataset</a>
+                <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                    <a href="/download/{{ optimized_results.output_file }}"
+                        class="btn-primary"
+                        style="background: linear-gradient(135deg,#10d9a0,#22d3ee); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; color: #031c13; -webkit-text-fill-color: #031c13; font-size: 0.82rem; padding: 0.7rem 1.4rem; box-shadow: 0 4px 16px rgba(16,217,160,0.3);">
+                        ⬇ CSV
+                    </a>
+                    <a href="/download_xlsx/{{ optimized_results.output_file }}"
+                        class="btn-primary"
+                        style="background: linear-gradient(135deg,#22c55e,#16a34a); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; color: #fff; -webkit-text-fill-color: #fff; font-size: 0.82rem; padding: 0.7rem 1.4rem; box-shadow: 0 4px 16px rgba(34,197,94,0.3);">
+                        ⬇ XLSX
+                    </a>
+                    <a href="/download_pdf/{{ optimized_results.output_file }}"
+                        class="btn-primary"
+                        style="background: linear-gradient(135deg,#4f8cff,#60a5fa); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; color: #fff; -webkit-text-fill-color: #fff; font-size: 0.82rem; padding: 0.7rem 1.4rem; box-shadow: 0 4px 16px rgba(79,140,255,0.3);">
+                        ⬇ PDF Report
+                    </a>
+                </div>
             </div>
 
-            <div class="chart-container" style="height: 250px;">
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-val">{{ optimized_results.report.metrics.rows_before }}</span>
+                    <span class="metric-label">Rows Before</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.rows_after }}</span>
+                    <span class="metric-label">Rows After</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.nulls_filled }}</span>
+                    <span class="metric-label">Nulls Filled</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val {{ 'danger' if optimized_results.report.metrics.duplicates_dropped > 0 else 'success' }}">
+                        {{ optimized_results.report.metrics.duplicates_dropped }}
+                    </span>
+                    <span class="metric-label">Dupes Removed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val {{ 'danger' if optimized_results.report.metrics.fuzzy_duplicates_dropped > 0 else 'success' }}">
+                        {{ optimized_results.report.metrics.fuzzy_duplicates_dropped }}
+                    </span>
+                    <span class="metric-label">Fuzzy Dupes Removed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.types_converted }}</span>
+                    <span class="metric-label">Types Converted</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.dates_standardized }}</span>
+                    <span class="metric-label">Dates Standardized</span>
+                </div>
+                {% if optimized_results.report.metrics.dates_rejected > 0 %}
+                <div class="metric-card">
+                    <span class="metric-val warning">{{ optimized_results.report.metrics.dates_rejected }}</span>
+                    <span class="metric-label">Dates Rejected</span>
+                </div>
+                {% endif %}
+                <div class="metric-card">
+                    <span class="metric-val {{ 'warning' if optimized_results.report.metrics.emails_flagged > 0 else 'success' }}">
+                        {{ optimized_results.report.metrics.emails_flagged }}
+                    </span>
+                    <span class="metric-label">Emails Flagged</span>
+                </div>
+                {% if optimized_results.report.metrics.emails_nullified > 0 %}
+                <div class="metric-card">
+                    <span class="metric-val warning">{{ optimized_results.report.metrics.emails_nullified }}</span>
+                    <span class="metric-label">Emails Nullified</span>
+                </div>
+                {% endif %}
+                {% if optimized_results.report.metrics.emails_rows_removed > 0 %}
+                <div class="metric-card">
+                    <span class="metric-val danger">{{ optimized_results.report.metrics.emails_rows_removed }}</span>
+                    <span class="metric-label">Rows (Bad Email)</span>
+                </div>
+                {% endif %}
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.phones_corrected }}</span>
+                    <span class="metric-label">Phones Normalized</span>
+                </div>
+                {% if optimized_results.report.metrics.phones_flagged_invalid > 0 %}
+                <div class="metric-card">
+                    <span class="metric-val warning">{{ optimized_results.report.metrics.phones_flagged_invalid }}</span>
+                    <span class="metric-label">Invalid Phones</span>
+                </div>
+                {% endif %}
+                <div class="metric-card">
+                    <span class="metric-val success">{{ optimized_results.report.metrics.cities_normalized }}</span>
+                    <span class="metric-label">Cities Normalized</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-val warning">{{ optimized_results.report.metrics.outliers_clipped }}</span>
+                    <span class="metric-label">Outliers Clipped</span>
+                </div>
+                {% if optimized_results.report.metrics.outliers_replaced > 0 %}
+                <div class="metric-card">
+                    <span class="metric-val warning">{{ optimized_results.report.metrics.outliers_replaced }}</span>
+                    <span class="metric-label">Outliers→Median</span>
+                </div>
+                {% endif %}
+            </div>
+
+            {# ── Quality Score 2.0 ── #}
+            {% if quality_before is defined %}
+            <div class="quality-section" style="background: #0c1124; border-radius: 18px; padding: 1.6rem 2rem; border: 1px solid rgba(255,255,255,0.05); margin-top: 2rem;">
+                <h4 style="background: linear-gradient(135deg,#4f8cff,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; font-size: 1rem;">Quality Score 2.0</h4>
+                <div class="quality-score-block">
+                    <div class="qs-circle qs-circle-before">
+                        <span class="qs-num" style="color: #fbbf24;">{{ quality_before }}%</span>
+                        <span class="qs-lbl">Before</span>
+                    </div>
+                    <div style="font-size: 1.8rem; color: #374060;">→</div>
+                    <div class="qs-circle qs-circle-after">
+                        <span class="qs-num" style="color: #10d9a0;">{{ quality_after }}%</span>
+                        <span class="qs-lbl">After</span>
+                    </div>
+                    {% if quality_improvement > 0 %}
+                    <div class="qs-improvement">+{{ quality_improvement }}% improvement</div>
+                    {% endif %}
+                </div>
+                <p style="font-size: 0.77rem; color: #374060; margin-top: 0.9rem; line-height: 1.8;">
+                    <span style="color: #7a8baf;">7 dimensions:</span>&nbsp;
+                    missing values · duplicates · type integrity · email validity ·
+                    date validity · outlier severity · normalization completeness
+                </p>
+            </div>
+            {% endif %}
+
+            {# ── Verification Panel ── #}
+            {% if verification is defined and verification %}
+            <div class="verify-panel">
+                <h4 style="background: linear-gradient(135deg,#4f8cff,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1.2rem; font-size: 1rem;">
+                    ✦ Post-Clean Verification Audit
+                </h4>
+
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '✅' if verification.invalid_emails_remaining == 0 else '⚠️' }}</span>
+                    <span class="verify-label">Invalid Emails Remaining</span>
+                    <span class="verify-val {{ 'verify-pass' if verification.invalid_emails_remaining == 0 else 'verify-warn' }}">{{ verification.invalid_emails_remaining }}</span>
+                </div>
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '✅' if verification.invalid_dates_remaining == 0 else '⚠️' }}</span>
+                    <span class="verify-label">Invalid Date Strings Remaining</span>
+                    <span class="verify-val {{ 'verify-pass' if verification.invalid_dates_remaining == 0 else 'verify-warn' }}">{{ verification.invalid_dates_remaining }}</span>
+                </div>
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '✅' if verification.invalid_phones_remaining == 0 else '⚠️' }}</span>
+                    <span class="verify-label">Invalid Phone Numbers Remaining</span>
+                    <span class="verify-val {{ 'verify-pass' if verification.invalid_phones_remaining == 0 else 'verify-warn' }}">{{ verification.invalid_phones_remaining }}</span>
+                </div>
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '✅' if verification.duplicates_remaining == 0 else '⚠️' }}</span>
+                    <span class="verify-label">Duplicate Rows Remaining</span>
+                    <span class="verify-val {{ 'verify-pass' if verification.duplicates_remaining == 0 else 'verify-warn' }}">{{ verification.duplicates_remaining }}</span>
+                </div>
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '⚠️' if verification.outliers_remaining > 0 else '✅' }}</span>
+                    <span class="verify-label">Statistical Outliers Remaining</span>
+                    <span class="verify-val {{ 'verify-warn' if verification.outliers_remaining > 0 else 'verify-pass' }}">{{ verification.outliers_remaining }}</span>
+                </div>
+                <div class="verify-row">
+                    <span class="verify-icon">{{ '⚠️' if verification.nulls_remaining > 0 else '✅' }}</span>
+                    <span class="verify-label">Null / Missing Values Remaining</span>
+                    <span class="verify-val {{ 'verify-warn' if verification.nulls_remaining > 0 else 'verify-pass' }}">{{ verification.nulls_remaining }}</span>
+                </div>
+
+                <div style="text-align: center; margin-top: 1.2rem;">
+                    <span class="export-status-badge {{ 'export-pass' if verification.export_status == 'PASS' else 'export-warn' }}">
+                        {{ '✅ Export Status: PASS' if verification.export_status == 'PASS' else '⚠️ Export Status: PASS WITH WARNINGS' }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Health Chart -->
+            <div class="chart-container" style="height: 260px;">
                 <canvas id="improvementChart"></canvas>
             </div>
 
-            <div style="margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem;">
-                <h4 style="color: var(--accent-primary);">Optimization Audit Log:</h4>
-                <ul style="margin-top: 1.5rem; color: var(--text-secondary); list-style: none;">
+            <!-- Audit Log -->
+            <div style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 2rem;">
+                <h4 style="margin-bottom: 1.2rem; font-size: 0.95rem;">
+                    <span style="background: linear-gradient(135deg,#4f8cff,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Optimization Audit Log</span>
+                    <span style="font-size: 0.73rem; font-weight: 500; color: #374060; margin-left: 8px; -webkit-text-fill-color: #374060;">
+                        {{ optimized_results.report.steps_applied | length }} steps applied
+                    </span>
+                </h4>
+                {% if optimized_results.report.steps_applied %}
+                <ul style="color: #7a8baf; list-style: none; display: flex; flex-direction: column; gap: 0.55rem;">
                     {% for step in optimized_results.report.steps_applied %}
-                    <li style="margin-bottom: 0.8rem; display: flex; align-items: center;">
-                        <span style="color: var(--success); font-weight: 800; margin-right: 12px;">✓</span> {{ step }}
+                    <li style="display: flex; align-items: flex-start; background: #10162d; border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.86rem;">
+                        <span style="color: #10d9a0; font-weight: 800; margin-right: 10px; flex-shrink: 0; font-size: 0.9rem;">✓</span>
+                        {{ step }}
                     </li>
                     {% endfor %}
                 </ul>
+                {% else %}
+                <p style="color: #374060; font-style: italic; font-size: 0.88rem;">
+                    Dataset was already clean — no transformations required.
+                </p>
+                {% endif %}
             </div>
         </section>
         {% endif %}
 
-        <!-- Data Insight -->
+        <!-- ── Data Preview ──────────────────────────────────────────── -->
         {% if preview %}
         <section class="glass-panel">
-            <h3 style="margin-bottom: 1.5rem;">Standardized Data Insight (Top 10)</h3>
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem;">
+                <span style="background: linear-gradient(135deg,#4f8cff,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    {% if optimized_results %}Cleaned{% else %}Raw{% endif %} Data Preview
+                </span>
+                <span style="font-size: 0.77rem; color: #374060; font-weight: 500; margin-left: 6px; -webkit-text-fill-color: #374060;">Top 10 rows</span>
+            </h3>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -248,12 +747,40 @@
         {% endif %}
     </div>
 
+    <!-- ── Scripts ─────────────────────────────────────────────────── -->
     <script>
-        function showLoader() { document.getElementById('loader').style.display = 'flex'; }
+        /* Loading overlay */
+        function showLoader() {
+            document.getElementById('loader').style.display = 'flex';
+        }
+
+        /* File name display */
         document.getElementById('fileInput').addEventListener('change', function (e) {
-            if (e.target.files.length > 0) document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+            if (e.target.files.length > 0) {
+                document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+            }
         });
 
+        /* Show/hide custom fill input */
+        function toggleCustom(col, val) {
+            const inp = document.getElementById('custom_' + col);
+            if (!inp) return;
+            inp.style.display = (val === 'Custom') ? 'block' : 'none';
+        }
+
+        /* Inject custom values into selects before submit */
+        function prepareCustomValues() {
+            document.querySelectorAll('.strategy-select').forEach(function (sel) {
+                if (sel.value === 'Custom') {
+                    const col = sel.name.replace('strategy_', '');
+                    const inp = document.getElementById('custom_' + col);
+                    const v = inp ? inp.value.trim() : '';
+                    sel.value = 'Custom:' + (v || 'N/A');
+                }
+            });
+        }
+
+        /* Health improvement bar chart */
         const optResults = document.getElementById('optimizationResults');
         if (optResults) {
             const hB = parseInt(optResults.dataset.healthBefore);
@@ -261,25 +788,93 @@
             new Chart(document.getElementById('improvementChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Initial Diagnostic Health', 'Final Standardized Health'],
+                    labels: ['Before Cleaning', 'After Cleaning'],
                     datasets: [{
                         data: [hB, hA],
-                        backgroundColor: ['rgba(239, 68, 68, 0.4)', 'rgba(16, 185, 129, 0.4)'],
-                        borderColor: ['#ef4444', '#10b981'],
-                        borderWidth: 2, borderRadius: 15
+                        backgroundColor: [
+                            'rgba(244,63,94,0.25)',
+                            'rgba(16,217,160,0.25)'
+                        ],
+                        borderColor: ['#f43f5e', '#10d9a0'],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, max: 100, grid: { display: false }, ticks: { color: '#7e8299' } },
-                        x: { grid: { display: false }, ticks: { color: '#7e8299' } }
+                        y: {
+                            beginAtZero: true, max: 100,
+                            grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+                            ticks: { color: '#7a8baf', callback: v => v + '%', font: { size: 11 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#7a8baf', font: { size: 12, weight: '600' } }
+                        }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#10162d',
+                            borderColor: 'rgba(79,140,255,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#d8e2f8',
+                            bodyColor: '#7a8baf',
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: { label: ctx => '  Health Score: ' + ctx.raw + '%' }
+                        }
+                    }
                 }
             });
         }
+
+        /* Score details modal functionality */
+        function openScoreModal() {
+            document.getElementById('scoreModal').style.display = 'flex';
+        }
+        function closeScoreModal() {
+            document.getElementById('scoreModal').style.display = 'none';
+        }
     </script>
+
+    <!-- Health Score Explanation Modal -->
+    <div id="scoreModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeScoreModal();">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeScoreModal()">&times;</span>
+            <h3 style="font-family: 'Outfit'; margin-bottom: 0.4rem; background: linear-gradient(135deg,#4f8cff,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 1.3rem;">Health Score Methodology</h3>
+            <p style="font-size: 0.85rem; margin-bottom: 1.4rem; color: #7a8baf; line-height: 1.7;">
+                A composite metric out of <strong style="color: #d8e2f8;">100%</strong> evaluating data quality across five key dimensions:
+            </p>
+            <ul style="font-size: 0.87rem; line-height: 1.6; color: #7a8baf; margin-bottom: 1.4rem; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+                <li style="background: #0c1124; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.7rem 1rem; display: flex; align-items: flex-start;">
+                    <span style="color: #f43f5e; font-weight: 700; margin-right: 10px; font-size: 1rem; flex-shrink: 0;">−</span>
+                    <div><strong style="color: #d8e2f8;">Missing Values</strong> (Max −30 pts): Deducts 2 pts per 1% null cell density.</div>
+                </li>
+                <li style="background: #0c1124; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.7rem 1rem; display: flex; align-items: flex-start;">
+                    <span style="color: #f43f5e; font-weight: 700; margin-right: 10px; font-size: 1rem; flex-shrink: 0;">−</span>
+                    <div><strong style="color: #d8e2f8;">Duplicate Rows</strong> (Max −20 pts): Proportional to duplicate row ratio.</div>
+                </li>
+                <li style="background: #0c1124; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.7rem 1rem; display: flex; align-items: flex-start;">
+                    <span style="color: #fbbf24; font-weight: 700; margin-right: 10px; font-size: 1rem; flex-shrink: 0;">−</span>
+                    <div><strong style="color: #d8e2f8;">Outlier Values</strong> (Max −15 pts): Statistical anomalies via IQR method.</div>
+                </li>
+                <li style="background: #0c1124; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.7rem 1rem; display: flex; align-items: flex-start;">
+                    <span style="color: #fbbf24; font-weight: 700; margin-right: 10px; font-size: 1rem; flex-shrink: 0;">−</span>
+                    <div><strong style="color: #d8e2f8;">Email Validity</strong> (Max −10 pts): Invalid or malformed email addresses.</div>
+                </li>
+                <li style="background: #0c1124; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.7rem 1rem; display: flex; align-items: flex-start;">
+                    <span style="color: #7a8baf; font-weight: 700; margin-right: 10px; font-size: 1rem; flex-shrink: 0;">−</span>
+                    <div><strong style="color: #d8e2f8;">Type Incoherency</strong> (Max −10 pts): Currency/numbers stored as strings.</div>
+                </li>
+            </ul>
+            <p style="font-size: 0.82rem; color: #374060; font-style: italic; text-align: center; padding-top: 0.8rem; border-top: 1px solid rgba(255,255,255,0.04);">
+                Optimizing your dataset addresses all issues above, moving the score toward 100%.
+            </p>
+        </div>
+    </div>
 </body>
 
 </html>
