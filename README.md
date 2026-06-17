@@ -31,8 +31,8 @@ The application features a stunning, premium **Dark Glassmorphism UI** with a cu
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/MizanShaikh19/Ai-based-data-cleaning.git
-   cd Ai-based-data-cleaning
+   git clone https://github.com/sn2744760-boop/Data-cleaning-platform.git
+   cd Data-cleaning-platform
    ```
 
 2. **Install Dependencies**
